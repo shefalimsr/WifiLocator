@@ -14,14 +14,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -143,42 +140,45 @@ public class Scan extends Activity {
 
                   mDatabase.child("Access Points").push().setValue(accessPoint);
 
+
               }
 
 
             }
 
+            Toast.makeText(Scan.this, " Scan complete for " + room + " !! ",Toast.LENGTH_LONG).show();
+
 
             // ----------------------------------- retrieving from database and displaying -----------------------------------------
-
-            DatabaseReference reference;
-
-            reference = FirebaseDatabase.getInstance().getReference().child("Access Points");
-
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                    {
-
-
-                    AccessPoint ap = dataSnapshot1.getValue(AccessPoint.class);
-
-                    wifi.add("ssid : " + ap.getName() + "\n" +"mac address : " + ap.getMac() + "\n" + "level : " + String.valueOf(ap.getLevel()) +  " dBm" + "\n" +  "Day of month :" + ap.getDay() + "\n" ); //append to the other data
-  //Log.d("wifi " , String.valueOf(wifi));
-
-                }
-
-                    list.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
-                            android.R.layout.simple_list_item_1, wifi));
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+//
+//            DatabaseReference reference;
+//
+//            reference = FirebaseDatabase.getInstance().getReference().child("Access Points");
+//
+//            reference.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                    for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+//                    {
+//
+//
+//                    AccessPoint ap = dataSnapshot1.getValue(AccessPoint.class);
+//
+//                    wifi.add("ssid : " + ap.getName() + "\n" +"mac address : " + ap.getMac() + "\n" + "level : " + String.valueOf(ap.getLevel()) +  " dBm" + "\n" +  "Day of month :" + ap.getDay() + "\n" ); //append to the other data
+//  //Log.d("wifi " , String.valueOf(wifi));
+//
+//                }
+//
+//                    list.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+//                            android.R.layout.simple_list_item_1, wifi));
+//
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                }
+//            });
 
 
         }
