@@ -33,7 +33,7 @@ public class Scan extends Activity {
     WifiManager wifiManager;
     WifiScanReceiver wifiReciever;
     ListView list;
-    String wifis[];
+
     WifiInfo wifiInfo;
     ArrayList<String> wifi;
     AccessPoint accessPoint;
@@ -48,15 +48,17 @@ public class Scan extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+
+        //------------------------------------------------obtaining value from bundle --------------------------------------------
+
         bundle=getIntent().getExtras();
+        building = bundle.getString("Building");
+        floor=bundle.getString("Floor");
+        room=bundle.getString("Room");
 
-        Log.d("Start", String.valueOf(bundle));
-         building = bundle.getString("Building");
-
-        Log.d("building ",building);
-         floor=bundle.getString("Floor");
-         room=bundle.getString("Room");
         list = (ListView) findViewById(R.id.list);
+
+
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiReciever = new WifiScanReceiver();
         wifiInfo = wifiManager.getConnectionInfo();
@@ -83,21 +85,25 @@ public class Scan extends Activity {
 
             List<ScanResult> wifiScanList = wifiManager.getScanResults();
             wifi = new ArrayList<String>();
-            wifis = new String[wifiScanList.size()];
-            for (int i = 0; i < wifiScanList.size(); i++) {
+
+            for (int i = 0; i < wifiScanList.size(); i++)
+            {
+
 
                 String ssid = wifiScanList.get(i).SSID;
                 String bssid = wifiScanList.get(i).BSSID;
                 Integer stren = wifiScanList.get(i).level;
                 Integer frq=wifiScanList.get(i).frequency;
                 Long timest = wifiScanList.get(i).timestamp;
-                long epoch = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (timest / 1000);
-                Date timestamp = new Date(epoch);
-               // String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (epoch*1000));
+
+
+                long epoch = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (timest / 1000);  // converting the time to epoch time
+                Date timestamp = new Date(epoch); // obtaining time from epoch in form of  " Sun Dec 10 18:26:37 GMT+05:30 2017 "
+
                 Log.d("date ", String.valueOf(timestamp));
 
-                String day1= String.valueOf(timestamp).substring(0,3);
-String time=String.valueOf(timestamp).substring(11,19);
+                String day1= String.valueOf(timestamp).substring(0,3);   // obtaining day from timestamp
+                String time=String.valueOf(timestamp).substring(11,19);  // obtaining time from timestamp
                 Log.d("time ",time);
 
                 Log.d("substring day ",day1);
@@ -122,22 +128,28 @@ String time=String.valueOf(timestamp).substring(11,19);
                     default: day="Thursday";
                 }
 
-//                double exp = (27.55 - (20 * Math.log10(frq)) + Math.abs(stren)) / 20.0;
-//                double distanceM = Math.pow(10.0, exp);
 
 
 
-String device= getDeviceName();
+                String device= getDeviceName();  // getting device name
 
 
-                accessPoint = new AccessPoint(building,floor,room,ssid,bssid,stren,time,day,getDeviceName());
+            //------------------------------------filter for IIITV wifis and sending to firebase --------------------------------
 
-                mDatabase.child("Access Points").push().setValue(accessPoint);
+              if(ssid.equals("IIITV1") || ssid.equals("IIITV2") || ssid.equals("IIITV-Staff"))
+              {
+
+                  accessPoint = new AccessPoint(building, floor, room, ssid, bssid, stren, time, day, getDeviceName());
+
+                  mDatabase.child("Access Points").push().setValue(accessPoint);
+
+              }
 
 
-
-                //wifis[i] = ((wifiScanList.get(i)).toString());
             }
+
+
+            // ----------------------------------- retrieving from database and displaying -----------------------------------------
 
             DatabaseReference reference;
 
@@ -172,6 +184,7 @@ String device= getDeviceName();
         }
     }
 
+    // ----------------------------------------------------- function for getting device name ------------------------------------------
 
     public String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
@@ -183,6 +196,8 @@ String device= getDeviceName();
         }
     }
 
+
+    //---------------------------------------------- for capitalizing model & manufacturer name -----------------------------------
 
     private String capitalize(String s) {
         if (s == null || s.length() == 0) {
