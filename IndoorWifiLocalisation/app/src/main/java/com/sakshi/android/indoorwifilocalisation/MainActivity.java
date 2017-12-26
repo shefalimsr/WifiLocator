@@ -39,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
 
     WifiInfo wifiInfo;
     ArrayList<AccessPoint> accessPointsList;
+    ArrayList<APoint> aPointsList;
     ArrayList<ImportantAccessPoint> importantAccessPoints;
+    ArrayList<ImpAccessPoint> impAccessPoints;
     ArrayList<CurrentAccessPoint> maccesspoints;
     ArrayList<String> wifi;
     double d[];
     double s[];
+    double dw[];
+    double sw[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
               maccesspoints = new ArrayList<CurrentAccessPoint>();
               importantAccessPoints = new ArrayList<ImportantAccessPoint>();
               accessPointsList = new ArrayList<AccessPoint>();
+              impAccessPoints = new ArrayList<ImpAccessPoint>();
+              aPointsList = new ArrayList<APoint>();
 
 
         list = (TextView) findViewById(R.id.list);
@@ -421,6 +427,192 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    private void getRoomWithoutTime(){
+        DatabaseReference reference;
+
+
+        // edit child name
+
+        reference = FirebaseDatabase.getInstance().getReference().child("Access Points");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+
+
+                    ImpAccessPoint ap = dataSnapshot1.getValue(ImpAccessPoint.class);
+
+                    // wifi.add("ssid : " + ap.getName() + "\n" +"mac address : " + ap.getMac() + "\n" + "level : " + String.valueOf(ap.getLevel()) +  " dBm" + "\n" +  "Day of month :" + ap.getDay() + "\n" ); //append to the other data
+//  //Log.d("wifi " , String.valueOf(wifi));
+                    if(ap.getMac().equals(mostImpAccessPoint())&&ap.getDay().equals(day)) {
+                        impAccessPoints.add(ap);
+                    }
+
+
+
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
+
+
+    }
+
+
+    private void getAllAccessPointsWithoutTime(){
+        DatabaseReference reference;
+
+
+        // edit child name
+
+//change child here
+        reference = FirebaseDatabase.getInstance().getReference().child("Access Points");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+
+
+                    APoint ap = dataSnapshot1.getValue(APoint.class);
+
+                    // wifi.add("ssid : " + ap.getName() + "\n" +"mac address : " + ap.getMac() + "\n" + "level : " + String.valueOf(ap.getLevel()) +  " dBm" + "\n" +  "Day of month :" + ap.getDay() + "\n" ); //append to the other data
+//  //Log.d("wifi " , String.valueOf(wifi));
+                    for(int k =0;k<impAccessPoints.size();k++){
+
+                        if((impAccessPoints.get(k).getRoom().equals(ap.getRoom()))&&ap.getDay().equals(day)) {
+                            aPointsList.add(ap);
+                        }
+                    }
+
+
+
+
+
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
+
+    }
+
+
+
+    private void calculateDistanceWithoutTime(){
+
+        int length = impAccessPoints.size();
+        dw = new double[length];
+        sw = new double[length];
+        int nd =0;
+
+// room no fetched from k
+
+        for(int k=0;k<impAccessPoints.size();k++){
+            // all routers in the room
+            for(int y=0;y<aPointsList.size();y++){
+                if(impAccessPoints.get(k).getRoom().equals(aPointsList.get(y).getRoom())){
+
+                    // if router is there in unknown fingerprint
+                    for(int z =0;z<maccesspoints.size();z++){
+
+                        if(aPointsList.get(y).getMac().equals(maccesspoints.get(z).getMac())){
+                            nd++;
+                            double d1 = maccesspoints.get(z).getLevel() - aPointsList.get(y).getLevel();
+
+                            dw[k] = dw[k] + Math.pow(d1,q);
+
+                        }
+                        else {
+
+                            double d1 = maccesspoints.get(z).getLevel() - defaultlevel;
+
+
+
+                            dw[k] = dw[k] + Math.pow(d1,q);
+                        }
+
+
+                    }
+
+
+
+                }
+
+            }
+
+        }
+
+
+        for(int k=0;k<impAccessPoints.size();k++){
+            dw[k] = Math.abs(dw[k]);
+            double d2 = 1/q;
+            dw[k] = Math.pow(dw[k],d2);
+        }
+
+
+
+        // similarity calculation
+
+        for(int k=0;k<impAccessPoints.size();k++){
+            int ne = maccesspoints.size();
+            double denom = alpha*ne/nd;
+            double denominator = 1 - denom;
+            sw[k] = 1/(dw[k]*denominator);
+
+
+        }
+        double max =sw[0];
+        int m=0;
+
+        for(int k=1;k<impAccessPoints.size();k++){
+
+            if(sw[k]>max){
+                m=k;
+                max = sw[k];
+            }
+
+        }
+
+        String roomt = impAccessPoints.get(m).getRoom();
+        Log.v("The room",roomt);
+        list.setText(roomt);
+
+
+
+    }
+
+
+
+
+
 
 
 }
