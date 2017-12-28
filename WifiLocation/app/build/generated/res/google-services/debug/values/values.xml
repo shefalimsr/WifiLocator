@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">232570592078-gqt6bps011gmlo0pjh5n73sfrl58bep9.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://wifilocation-16072.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">232570592078</string>
+    <string name="google_api_key" translatable="false">AIzaSyAI6n5EUBSEnO6gn_bGoZq08hRSlvGlYkQ</string>
+    <string name="google_app_id" translatable="false">1:232570592078:android:85784b1c7d68940a</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAI6n5EUBSEnO6gn_bGoZq08hRSlvGlYkQ</string>
+    <string name="google_storage_bucket" translatable="false">wifilocation-16072.appspot.com</string>
+    <string name="project_id" translatable="false">wifilocation-16072</string>
+</resources>
