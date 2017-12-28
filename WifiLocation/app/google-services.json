@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "232570592078",
+    "firebase_url": "https://wifilocation-16072.firebaseio.com",
+    "project_id": "wifilocation-16072",
+    "storage_bucket": "wifilocation-16072.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:232570592078:android:85784b1c7d68940a",
+        "android_client_info": {
+          "package_name": "com.sakshi.android.wifilocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "232570592078-9obvv846qb5re3oeo5rf7un0tdopk7l9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sakshi.android.wifilocation",
+            "certificate_hash": "60beedbcfc7e09b9226b9e346bebfaebd45d312d"
+          }
+        },
+        {
+          "client_id": "232570592078-gqt6bps011gmlo0pjh5n73sfrl58bep9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI6n5EUBSEnO6gn_bGoZq08hRSlvGlYkQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "232570592078-gqt6bps011gmlo0pjh5n73sfrl58bep9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
